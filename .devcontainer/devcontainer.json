@@ -1,0 +1,56 @@
+{
+  "name": "Open WebUI DevContainer",
+  "dockerComposeFile": ["docker-compose.yml"],
+  "service": "open-webui",
+  "workspaceFolder": "/app",
+  "runServices": ["ollama", "open-webui"],
+  "shutdownAction": "stopCompose",
+  "postCreateCommand": "bun install",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.codeActionsOnSave": {
+          "source.fixAll": true,
+          "source.organizeImports": true
+        },
+        "[svelte]": {
+          "editor.defaultFormatter": "svelte.svelte-vscode"
+        },
+        "[typescript]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode"
+        },
+        "[javascript]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode"
+        },
+        "[python]": {
+          "editor.defaultFormatter": "ms-python.autopep8",
+          "editor.formatOnSave": true
+        }
+      },
+      "extensions": [
+        "svelte.svelte-vscode",
+        "esbenp.prettier-vscode",
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "bradlc.vscode-tailwindcss",
+        "formulahendry.auto-rename-tag",
+        "oderwat.indent-rainbow",
+        "ms-vscode.vscode-typescript-next"
+      ]
+    }
+  },
+  "forwardPorts": [3000, 11434],
+  "portsAttributes": {
+    "3000": {
+      "label": "Open WebUI",
+      "onAutoForward": "notify"
+    },
+    "11434": {
+      "label": "Ollama API",
+      "onAutoForward": "notify"
+    }
+  }
+}

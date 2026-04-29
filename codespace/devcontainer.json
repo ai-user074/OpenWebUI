@@ -1,0 +1,40 @@
+{
+  "name": "Open WebUI + Ollama (CPU)",
+  "dockerComposeFile": ["docker-compose.yml"],
+  "service": "open-webui",
+  "workspaceFolder": "/workspace",
+  "runServices": ["ollama", "open-webui"],
+  "shutdownAction": "stopCompose",
+  "postCreateCommand": "echo '\n✅ Open WebUI: http://localhost:3000\n✅ Ollama API: http://localhost:11434\n'",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "remote.extensionKind": ["workspace"]
+      },
+      "extensions": []
+    },
+    "codespaces": {
+      "portActions": {
+        "3000": {
+          "onAutoForward": "openPreview"
+        },
+        "11434": {
+          "onAutoForward": "silent"
+        }
+      }
+    }
+  },
+  "forwardPorts": [3000, 11434],
+  "portsAttributes": {
+    "3000": {
+      "label": "Open WebUI",
+      "onAutoForward": "openPreview"
+    },
+    "11434": {
+      "label": "Ollama API",
+      "onAutoForward": "silent"
+    }
+  },
+  "updateContentCommand": "docker compose pull"
+}

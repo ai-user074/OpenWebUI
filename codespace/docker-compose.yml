@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    volumes:
+      - ollama:/root/.ollama
+    ports:
+      - "11434:11434"
+    environment:
+      - OLLAMA_HOST=0.0.0.0
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    command: >
+      sh -c "
+        echo '🚀 Starting Ollama...' &&
+        ollama serve &
+        OLLAMA_PID=$!
+        sleep 5 &&
+        echo '📥 Pulling phi3:3.8b (first run takes 2-5 min)...' &&
+        ollama pull phi3:3.8b &&
+        echo '✅ Ollama ready' &&
+        wait $OLLAMA_PID
+      "
+
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: open-webui
+    volumes:
+      - open-webui:/app/backend/data
+    depends_on:
+      ollama:
+        condition: service_healthy
+    ports:
+      - "3000:8080"
+    environment:
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - WEBUI_SECRET_KEY=${WEBUI_SECRET_KEY:-dev-secret-key-change-me}
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
+
+volumes:
+  ollama:
+  open-webui:
